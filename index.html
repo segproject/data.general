@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gestión de Colaboradores</title>
+<style>
+:root {
+--primary: #3498db;
+--primary-dark: #2980b9;
+--success: #27ae60;
+--danger: #e74c3c;
+--warning: #f39c12;
+--dark: #2c3e50;
+--light: #ecf0f1;
+--gray: #95a5a6;
+--border: #ddd;
+--text: #2c3e50;
+--text-light: #7f8c8d;
+}
+* {
+box-sizing: border-box;
+}
+body {
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+margin: 0;
+padding: 0;
+background-color: #f8f9fa;
+color: var(--text);
+line-height: 1.5;
+}
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 16px;
+}
+/* Encabezado */
+h1 {
+font-size: 1.75rem;
+margin: 16px 0;
+color: var(--dark);
+text-align: center;
+}
+h2 {
+font-size: 1.375rem;
+margin: 16px 0 12px;
+color: var(--dark);
+}
+h3 {
+font-size: 1.125rem;
+margin: 16px 0 10px;
+color: var(--dark);
+}
+/* Pestañas */
+.tab-container {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+margin: 16px 0;
+justify-content: center;
+}
+.tab-button {
+padding: 10px 16px;
+background: var(--primary);
+color: white;
+border: none;
+cursor: pointer;
+border-radius: 6px;
+font-weight: 600;
+min-width: 100px;
+transition: background 0.2s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+}
+.tab-button:hover {
+background: var(--primary-dark);
+}
+.tab-button.active {
+background: var(--primary-dark);
+box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+/* Contenido de pestañas */
+.tab-content {
+display: none;
+padding: 20px;
+background: white;
+border-radius: 10px;
+box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.tab-content.active {
+display: block;
+animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+/* Filtros */
+.filters-container {
+background: #f5f5f5;
+padding: 16px;
+border-radius: 12px;
+margin-bottom: 20px;
+box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.filter-group {
+margin-bottom: 12px;
+}
+.filter-label {
+display: block;
+margin-bottom: 8px;
+font-weight: 600;
+color: var(--dark);
+}
+.filter-options {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+}
+/* --- FILTROS MODERNOS --- */
+.filter-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.filter-option:hover {
+  background: #f0f0f0;
+  border-color: var(--primary);
+}
+
+.filter-option input[type="checkbox"] {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+}
+
+.filter-option span {
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Tablas — CON LÍNEAS COMPLETAS */
+.table-container {
+overflow-x: auto;
+width: 100%;
+margin: 16px 0;
+border-radius: 8px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+table {
+width: 100%;
+border-collapse: collapse;
+min-width: 600px;
+border: 1px solid var(--border);
+}
+th, td {
+padding: 12px 10px;
+text-align: left;
+border: 1px solid var(--border);
+font-size: 0.95rem;
+}
+th {
+background-color: var(--success);
+color: white;
+font-weight: 600;
+position: sticky;
+top: 0;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+font-size: 0.85rem;
+}
+tr:nth-child(even) {
+background-color: #fafafa;
+}
+tr:hover {
+background-color: #f5f9ff;
+}
+/* Formularios */
+.form-container {
+margin-top: 20px;
+padding: 20px;
+background: var(--light);
+border-radius: 10px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.form-row {
+display: flex;
+gap: 16px;
+flex-wrap: wrap;
+margin: 0 -8px;
+}
+.form-group {
+flex: 1 1 200px;
+padding: 0 8px;
+margin-bottom: 16px;
+}
+label {
+display: block;
+margin-bottom: 6px;
+font-weight: 600;
+color: var(--dark);
+font-size: 0.95rem;
+}
+input, select {
+width: 100%;
+padding: 12px;
+border: 1px solid var(--border);
+border-radius: 6px;
+font-size: 1rem;
+transition: border-color 0.2s;
+}
+input:focus, select:focus {
+outline: none;
+border-color: var(--primary);
+box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+button {
+padding: 12px 20px;
+background: var(--primary);
+color: white;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+font-size: 1rem;
+font-weight: 600;
+transition: background 0.2s, transform 0.1s;
+min-height: 44px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+button:hover {
+background: var(--primary-dark);
+transform: translateY(-1px);
+}
+button:active {
+transform: translateY(0);
+}
+.delete-btn {
+background: #E53935;
+color: white;
+padding: 8px 16px;
+font-size: 0.9rem;
+}
+.delete-btn:hover {
+background: #D32F2F;
+}
+.edit-btn {
+background: #FFC107;
+color: #333;
+padding: 8px 16px;
+font-size: 0.9rem;
+}
+.edit-btn:hover {
+background: #FFB300;
+}
+.carnet-btn, .ptt-btn, .config-btn {
+background: var(--warning);
+padding: 8px 16px;
+font-size: 0.9rem;
+margin-right: 8px;
+}
+.carnet-btn:hover, .ptt-btn:hover, .config-btn:hover {
+background: #e67e22;
+}
+.backup-btn {
+background: #8e44ad;
+padding: 12px 20px;
+font-size: 1rem;
+}
+.backup-btn:hover {
+background: #7d3c98;
+}
+/* Íconos */
+.icon {
+font-weight: bold;
+font-size: 1.1rem;
+text-align: center;
+display: inline-block;
+min-width: 24px;
+}
+/* Alertas */
+.alert-red { color: var(--danger); font-weight: bold; }
+.alert-yellow { color: var(--warning); font-weight: bold; }
+.alert-green { color: var(--success); font-weight: bold; }
+.alert-gray { color: var(--text-light); font-style: italic; }
+/* Configuración */
+.config-section {
+margin-bottom: 25px;
+padding-bottom: 20px;
+border-bottom: 1px solid #eee;
+}
+.list-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 12px;
+background: #f9f9f9;
+margin: 8px 0;
+border-radius: 6px;
+box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+/* Dashboard */
+.dashboard-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+gap: 16px;
+margin-bottom: 24px;
+}
+.metric-card {
+background: white;
+padding: 20px;
+border-radius: 10px;
+text-align: center;
+box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+border: 1px solid #eee;
+}
+.metric-value {
+font-size: 1.75rem;
+font-weight: 700;
+margin: 8px 0;
+}
+.metric-label {
+color: var(--text-light);
+font-size: 0.95rem;
+}
+.progress-category {
+margin: 16px 0;
+padding: 12px;
+background: #fafafa;
+border-radius: 8px;
+border: 1px solid #eee;
+}
+.progress-bar {
+height: 10px;
+background: #eee;
+border-radius: 5px;
+overflow: hidden;
+margin-top: 6px;
+}
+.progress-fill {
+height: 100%;
+border-radius: 5px;
+}
+/* Modales */
+#editModal, #carnetModal, #pttModal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 1000;
+padding: 20px;
+align-items: center;
+justify-content: center;
+}
+#editModal > div, #carnetModal > div, #pttModal > div {
+background: white;
+padding: 24px;
+border-radius: 12px;
+max-width: 95%;
+max-height: 90vh;
+overflow-y: auto;
+box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.modal-header {
+margin-top: 0;
+margin-bottom: 20px;
+padding-bottom: 12px;
+border-bottom: 2px solid var(--light);
+}
+/* Mensaje de bienvenida */
+.welcome-message {
+text-align: center;
+padding: 40px 20px;
+background: var(--light);
+border-radius: 12px;
+margin: 20px 0;
+}
+.welcome-message h3 {
+margin-top: 0;
+color: var(--dark);
+}
+.welcome-message p {
+color: var(--text-light);
+max-width: 600px;
+margin: 0 auto 20px;
+}
+/* Responsive extra */
+@media (max-width: 768px) {
+.container {
+padding: 12px;
+}
+h1 {
+font-size: 1.5rem;
+}
+h2 {
+font-size: 1.25rem;
+}
+.tab-container {
+flex-direction: column;
+align-items: stretch;
+}
+.tab-button {
+width: 100%;
+text-align: center;
+font-size: 1.1rem;
+padding: 14px;
+}
+.form-row {
+flex-direction: column;
+gap: 12px;
+}
+.form-group {
+flex: 1 1 100%;
+padding: 0;
+}
+.dashboard-grid {
+grid-template-columns: 1fr;
+}
+.metric-value {
+font-size: 1.5rem;
+}
+table {
+min-width: 500px;
+}
+th, td {
+padding: 10px 8px;
+font-size: 0.875rem;
+}
+button {
+width: 100%;
+margin-bottom: 10px;
+}
+.edit-btn, .carnet-btn, .ptt-btn, .config-btn, .delete-btn {
+width: auto;
+margin: 4px;
+font-size: 0.85rem;
+padding: 6px 12px;
+}
+.filter-options {
+flex-direction: column;
+gap: 8px;
+}
+}
+@media (max-width: 480px) {
+.container {
+padding: 8px;
+}
+h1 {
+font-size: 1.35rem;
+}
+.metric-value {
+font-size: 1.35rem;
+}
+table {
+min-width: 400px;
+}
+th, td {
+padding: 8px 6px;
+font-size: 0.8rem;
+}
+.icon {
+font-size: 1rem;
+}
+}
+
+/* --- BOTONES DE ACCIÓN EN TABLA PRINCIPAL (CIRCULARES Y HORIZONTALES) --- */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-buttons button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: transform 0.1s, background 0.2s;
+  margin: 0;
+}
+
+.action-buttons button:hover {
+  transform: scale(1.1);
+}
+
+/* --- BOTONES EN COLABORADORES EN RIESGO (CON TEXTO VISIBLE) --- */
+.action-buttons-riesgo {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-buttons-riesgo button {
+  min-width: 70px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  gap: 4px;
+  transition: background 0.2s;
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.action-buttons-riesgo button span {
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+
+.action-buttons-riesgo .ptt-btn {
+  background: #FFC107;
+  color: #333;
+}
+
+.action-buttons-riesgo .ptt-btn:hover {
+  background: #FFB300;
+}
+
+.action-buttons-riesgo .carnet-btn {
+  background: #E53935;
+  color: white;
+}
+
+.action-buttons-riesgo .carnet-btn:hover {
+  background: #D32F2F;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>👥 Gestión de Colaboradores</h1>
+<!-- PESTAÑAS -->
+<div class="tab-container">
+<button class="tab-button active" onclick="openTab('data')">📋 DATA</button>
+<button class="tab-button" onclick="openTab('dashboard')">📊 DASHBOARD</button>
+<button class="tab-button" onclick="openTab('sanidad')">🩺 CARNET DE SANIDAD</button>
+<button class="tab-button" onclick="openTab('reportePTT')">📋 REPORTE PTT</button>
+<button class="tab-button" onclick="openTab('configuracion')">⚙️ CONFIGURACIÓN</button>
+</div>
+
+<!-- CONTENIDO DE LA PESTAÑA DATA -->
+<div id="data" class="tab-content active">
+  <h2>📋 Lista de Colaboradores</h2>
+
+  <!-- Botón para mostrar/ocultar filtros y formulario -->
+  <button id="toggleFiltersFormBtn" onclick="toggleFiltersAndForm()" style="margin-bottom: 16px; background: var(--warning); color: white;">
+    ▲ Mostrar Filtros y Formulario
+  </button>
+
+  <!-- Contenedor de filtros + formulario (oculto por defecto) -->
+  <div id="filtersAndFormContainer" style="display: none;">
+    <!-- FILTROS -->
+    <div class="filters-container">
+      <div class="filter-group">
+        <span class="filter-label"><span class="icon">📋</span> ESTADO:</span>
+        <div class="filter-options">
+          <label class="filter-option">
+            <input type="checkbox" value="ACTIVO" checked onchange="applyDataFilters()"> <span>ACTIVO</span>
+          </label>
+          <label class="filter-option">
+            <input type="checkbox" value="INACTIVO" checked onchange="applyDataFilters()"> <span>INACTIVO</span>
+          </label>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label"><span class="icon">👔</span> CARGO:</span>
+        <div class="filter-options" id="cargoFiltersContainer">
+          <!-- Se llenará dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="form-container">
+      <h3>➕ Agregar Nuevo Colaborador</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Estado:</label>
+          <select id="estado">
+            <option value="ACTIVO">ACTIVO</option>
+            <option value="INACTIVO">INACTIVO</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nombres:</label>
+          <input type="text" id="nombres" placeholder="" required />
+        </div>
+        <div class="form-group">
+          <label>Apellidos:</label>
+          <input type="text" id="apellidos" placeholder="" required />
+        </div>
+        <div class="form-group">
+          <label>Cargo:</label>
+          <select id="cargo">
+            <!-- Se llenará dinámicamente -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Documento:</label>
+          <input type="text" id="documento" placeholder="" required />
+        </div>
+        <div class="form-group">
+          <label>Password PTT:</label>
+          <input type="text" id="passwordPTT" placeholder="" required />
+        </div>
+        <div class="form-group">
+          <label>Código Caja:</label>
+          <input type="text" id="codigoCaja" placeholder="" />
+        </div>
+        <div class="form-group">
+          <label>Usuario P.A.:</label>
+          <input type="text" id="usuarioPA" placeholder="" />
+        </div>
+        <div class="form-group">
+          <label>Cumpleaños:</label>
+          <input type="text" id="cumpleanos" placeholder="DD/MM/YYYY" required />
+        </div>
+        <div class="form-group">
+          <label>TVNI:</label>
+          <select id="tvni">
+            <option value="SI">SI</option>
+            <option value="NO">NO</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button onclick="addCollaborator()">➕ Agregar Colaborador</button>
+        <button onclick="clearDataForm()" style="background: var(--gray); color: white;">❌ Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-container">
+    <table id="collaboratorsTable">
+      <thead>
+        <tr>
+          <th>ESTADO</th>
+          <th>NOMBRES</th>
+          <th>APELLIDOS</th>
+          <th>CARGO</th>
+          <th>DOCUMENTO</th>
+          <th>PASSWORD PTT</th>
+          <th>CODIGO CAJA</th>
+          <th>USUARIO P.A.</th>
+          <th>CUMPLEAÑOS</th>
+          <th>TVNI</th>
+          <th>ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Resto de las pestañas sin cambios -->
+<!-- CONTENIDO DE LA PESTAÑA CARNET DE SANIDAD -->
+<div id="sanidad" class="tab-content">
+<h2>🩺 Carnet de Sanidad</h2>
+<p>📅 Fecha actual en Perú: <span id="currentDatePeru"></span></p>
+<div class="table-container">
+<table id="sanidadTable">
+<thead>
+<tr>
+<th>ESTADO</th>
+<th>NOMBRE</th>
+<th>APELLIDO</th>
+<th>CARGO</th>
+<th>VENCIMIENTO</th>
+<th>ALERTA</th>
+<th>ACCIONES</th>
+</tr>
+</thead>
+<tbody id="sanidadBody"></tbody>
+</table>
+</div>
+</div>
+<!-- CONTENIDO DE LA PESTAÑA REPORTE PTT -->
+<div id="reportePTT" class="tab-content">
+<h2>📋 Reporte PTT</h2>
+<p>Esta tabla muestra todos los colaboradores ACTIVOS. Haz clic en "✏️" para completar sus porcentajes de capacitación.</p>
+<!-- Filtros -->
+<div class="form-row" style="margin-bottom: 16px;">
+<div class="form-group" style="flex: 1 1 200px;">
+<input type="text" id="searchName" placeholder="🔍 Buscar por nombre..." onkeyup="filterMatrix()" />
+</div>
+<div class="form-group" style="flex: 1 1 150px;">
+<select id="filterStatus" onchange="filterMatrix()">
+<option value="">Todos</option>
+<option value="ACTIVO">ACTIVO</option>
+<option value="INACTIVO">INACTIVO</option>
+</select>
+</div>
+</div>
+<!-- Contenedor con scroll horizontal -->
+<div class="table-container">
+<div id="matrixContainer"></div>
+</div>
+</div>
+<!-- CONTENIDO DE LA PESTAÑA DASHBOARD -->
+<div id="dashboard" class="tab-content">
+<h2>📊 Dashboard de Capacitación</h2>
+<div id="dashboardContent"></div>
+</div>
+<!-- CONTENIDO DE LA PESTAÑA CONFIGURACIÓN -->
+<div id="configuracion" class="tab-content">
+<h2>⚙️ Configuración del Sistema</h2>
+<!-- Agregar nueva categoría -->
+<div class="config-section">
+<h3>➕ Agregar Nueva Escuela</h3>
+<div class="form-row">
+<div class="form-group">
+<label>Nombre de la escuela:</label>
+<input type="text" id="newCategoryName" placeholder="" />
+</div>
+</div>
+<button onclick="addNewCategory()">➕ Agregar Escuela</button>
+</div>
+<!-- Lista de categorías -->
+<div class="config-section">
+<h3>🏷️ Escuelas Actuales</h3>
+<div id="categoriesList"></div>
+</div>
+<!-- Agregar nueva subcategoría -->
+<div class="config-section">
+<h3>➕ Agregar Nuevo Curso (Columna)</h3>
+<div class="form-row">
+<div class="form-group">
+<label>Nombre del Curso:</label>
+<input type="text" id="newSubcategoryName" placeholder="" />
+</div>
+<div class="form-group">
+<label>Escuela:</label>
+<select id="parentCategorySelect">
+<!-- Se llenará dinámicamente -->
+</select>
+</div>
+</div>
+<button onclick="addNewSubcategory()">➕ Agregar Curso</button>
+</div>
+<!-- Lista de subcategorías por categoría -->
+<div class="config-section">
+<h3>📂 Subcategorías por Categoría</h3>
+<div id="subcategoriesList"></div>
+</div>
+<!-- Agregar nuevo cargo -->
+<div class="config-section">
+<h3>➕ Agregar Nuevo Cargo</h3>
+<div class="form-row">
+<div class="form-group">
+<label>Nombre del Cargo:</label>
+<input type="text" id="newRoleName" placeholder="" />
+</div>
+</div>
+<button onclick="addNewRole()">➕ Agregar Cargo</button>
+</div>
+<!-- Lista de cargos -->
+<div class="config-section">
+<h3>👔 Cargos Actuales</h3>
+<div id="rolesList"></div>
+</div>
+<!-- Botón de respaldo -->
+<div class="config-section">
+<h3>💾 Respaldo y Restauración</h3>
+<button class="backup-btn" onclick="backupData()">⬇️ Descargar Respaldo (.json)</button>
+<button class="backup-btn" onclick="importBackup()">⬆️ Importar Respaldo (.json)</button>
+<input type="file" id="importFile" style="display:none;" accept=".json" onchange="handleImportFile(event)" />
+</div>
+</div>
+</div>
+<!-- MODALES -->
+<div id="editModal">
+<div>
+<h3 class="modal-header">✏️ Editar Colaborador</h3>
+<div class="form-row">
+<div class="form-group">
+<label>Estado:</label>
+<select id="editEstado">
+<option value="ACTIVO">ACTIVO</option>
+<option value="INACTIVO">INACTIVO</option>
+</select>
+</div>
+<div class="form-group">
+<label>Nombres:</label>
+<input type="text" id="editNombres" required />
+</div>
+<div class="form-group">
+<label>Apellidos:</label>
+<input type="text" id="editApellidos" required />
+</div>
+<div class="form-group">
+<label>Cargo:</label>
+<select id="editCargo">
+<!-- Se llenará dinámicamente -->
+</select>
+</div>
+<div class="form-group">
+<label>Documento:</label>
+<input type="text" id="editDocumento" required />
+</div>
+<div class="form-group">
+<label>Password PTT:</label>
+<input type="text" id="editPasswordPTT" required />
+</div>
+<div class="form-group">
+<label>Código Caja:</label>
+<input type="text" id="editCodigoCaja" />
+</div>
+<div class="form-group">
+<label>Usuario P.A.:</label>
+<input type="text" id="editUsuarioPA" />
+</div>
+<div class="form-group">
+<label>Cumpleaños:</label>
+<input type="text" id="editCumpleanos" placeholder="DD/MM/YYYY" required />
+</div>
+<div class="form-group">
+<label>TVNI:</label>
+<select id="editTVNI">
+<option value="si">SI</option>
+<option value="no">NO</option>
+</select>
+</div>
+</div>
+<div style="margin-top:24px; text-align:right; display:flex; gap:12px; flex-wrap:wrap;">
+<button onclick="closeEditModal()" style="background:var(--gray); flex:1; min-width:120px;">❌ Cancelar</button>
+<button onclick="saveEdit()" style="background:var(--primary); flex:1; min-width:120px;">✅ Guardar Cambios</button>
+</div>
+</div>
+</div>
+<div id="carnetModal">
+<div>
+<h3 class="modal-header">🩺 Registrar/Editar Carnet de Sanidad</h3>
+<p><strong>Colaborador:</strong> <span id="carnetNombre"></span></p>
+<div class="form-group" style="margin-top:16px;">
+<label>📅 Fecha de Vencimiento (DD/MM/YYYY):</label>
+<input type="text" id="carnetVencimiento" placeholder="Ej: 15/12/2026" required />
+</div>
+<div style="margin-top:24px; text-align:right; display:flex; gap:12px; flex-wrap:wrap;">
+<button onclick="closeCarnetModal()" style="background:var(--gray); flex:1; min-width:120px;">❌ Cancelar</button>
+<button onclick="saveCarnet()" style="background:var(--primary); flex:1; min-width:120px;">✅ Guardar</button>
+</div>
+</div>
+</div>
+<div id="pttModal">
+<div>
+<h3 class="modal-header">📋 Editar Reporte PTT</h3>
+<p><strong>Colaborador:</strong> <span id="pttNombre"></span></p>
+<div class="form-row" style="margin-top:16px; flex-wrap: wrap;">
+<div id="pttFieldsContainer"></div>
+</div>
+<div style="margin-top:24px; text-align:right; display:flex; gap:12px; flex-wrap:wrap;">
+<button onclick="closePttModal()" style="background:var(--gray); flex:1; min-width:120px;">❌ Cancelar</button>
+<button onclick="savePtt()" style="background:var(--primary); flex:1; min-width:120px;">✅ Guardar Cambios</button>
+</div>
+</div>
+</div>
+<script>
+// --- Constantes y almacenamiento ---
+const STORAGE_KEY = "colaboradores_v1";
+const CATEGORIES_STORAGE_KEY = "ptt_categories_v1";
+const ROLES_STORAGE_KEY = "custom_roles_v1";
+let collaborators = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+let pttCategories = JSON.parse(localStorage.getItem(CATEGORIES_STORAGE_KEY)) || null;
+let customRoles = JSON.parse(localStorage.getItem(ROLES_STORAGE_KEY)) || [];
+
+// Función para generar color aleatorio
+function generateRandomColor() {
+const letters = '0123456789ABCDEF';
+let color = '#';
+for (let i = 0; i < 6; i++) {
+color += letters[Math.floor(Math.random() * 16)];
+}
+return color;
+}
+
+// Si no hay categorías guardadas, usar las predeterminadas
+if (!pttCategories) {
+pttCategories = [
+{
+name: "PEPE",
+color: "#F39C12",
+columns: ["BPM", "PHS"]
+},
+{
+name: "PROCESOS PAPA JOHNS",
+color: "#F1C40F",
+columns: ["B. INCOMPLETAS", "BORDES DE QUESO", "LASAGNA", "TPM HORNOS", "THE VOICE"]
+},
+{
+name: "NUEVOS LANZAMIENTOS E INNOVACIONES",
+color: "#2ECC71",
+columns: ["ACTUALIZACION KDS", "PIZZA GARLIC EPIC", "ROLLITOS DE MANJAR", "SWEET & SPICY", "CRUSTY", "VALES Y CUPONES", "ESTRELLA", "PAPABOX 25", "SHARE BOX", "PAPACONO", "ROLL DE JALAPEÑO", "CROISSANT", "EMPANADA", "PAN BAGUETTE", "PIZZA PARRILLERA", "PIZZA HALLOWEEN"]
+},
+{
+name: "PQ10",
+color: "#9B59B6",
+columns: ["FECHADOS", "PLAN DE QUESO", "REBOLEO", "ROTACION", "PLAN DE MASA", "PALMOTEO", "ARMADO"]
+},
+{
+name: "TRAMP GRASA Y SUMI",
+color: "#E67E22",
+columns: ["TRAMPA DE GRASA", "SUMIDEROS"]
+},
+{
+name: "SEGURIDAD ELECTRICA",
+color: "#3498DB",
+columns: ["INTROD", "CONCEPTOS", "INTERRUPTOR D.", "INTERRUPTOR T.", "CORTO CIRC.", "ESTRUC. TABL.", "PUESTA POZO T.", "MALAS PR"]
+},
+{
+name: "PQ10 EXPERT",
+color: "#1ABC9C",
+columns: ["LINEA", "12 PASOS", "VENTANA", "Z. FERMENT.", "EVALUACION S.", "RECEPCION", "MDOG", "ROTACION MASA"]
+}
+];
+localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(pttCategories));
+} else {
+pttCategories.forEach(cat => {
+if (!cat.color) cat.color = generateRandomColor();
+});
+localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(pttCategories));
+}
+
+const BASE_ROLES = ["GERENTE", "ASISTENTE", "LIDER", "MASTER", "T.M"];
+let allRoles = [...BASE_ROLES, ...customRoles];
+let editingIndex = -1;
+let editingCarnetIndex = -1;
+let editingPttIndex = -1;
+
+// --- Funciones auxiliares ---
+function shouldShowPq10Expert(cargo) {
+return ["GERENTE", "ASISTENTE", "LIDER", "MASTER"].includes(cargo);
+}
+
+function getAllColumnsForCargo(cargo) {
+let all = [];
+pttCategories.forEach(cat => {
+if (cat.name === "PQ10 EXPERT" && !shouldShowPq10Expert(cargo)) {
+return;
+}
+all = all.concat(cat.columns);
+});
+return all;
+}
+
+function saveToStorage() {
+localStorage.setItem(STORAGE_KEY, JSON.stringify(collaborators));
+}
+
+function saveCategories() {
+localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(pttCategories));
+}
+
+function saveRoles() {
+localStorage.setItem(ROLES_STORAGE_KEY, JSON.stringify(customRoles));
+allRoles = [...BASE_ROLES, ...customRoles];
+populateRoleSelects();
+populateCargoFilters();
+}
+
+function populateRoleSelects() {
+const selects = [document.getElementById("cargo"), document.getElementById("editCargo")];
+selects.forEach(select => {
+if (!select) return;
+select.innerHTML = "";
+allRoles.forEach(role => {
+const option = document.createElement("option");
+option.value = role;
+option.textContent = role;
+select.appendChild(option);
+});
+});
+}
+
+function populateCategorySelect() {
+const select = document.getElementById("parentCategorySelect");
+if (!select) return;
+select.innerHTML = "";
+pttCategories.forEach((cat, index) => {
+const option = document.createElement("option");
+option.value = index;
+option.textContent = cat.name;
+select.appendChild(option);
+});
+}
+
+// ✅ Rellenar filtros de cargo
+function populateCargoFilters() {
+const container = document.getElementById("cargoFiltersContainer");
+if (!container) return;
+container.innerHTML = "";
+allRoles.forEach(role => {
+const label = document.createElement("label");
+label.className = "filter-option";
+label.innerHTML = `
+<input type="checkbox" value="${role}" checked onchange="applyDataFilters()"> <span>${role}</span>
+`;
+container.appendChild(label);
+});
+}
+
+function renderCategoriesList() {
+const container = document.getElementById("categoriesList");
+container.innerHTML = "";
+pttCategories.forEach((cat, index) => {
+const item = document.createElement("div");
+item.className = "list-item";
+item.innerHTML = `
+<span>${cat.name} <small>(Color: ${cat.color})</small></span>
+<button onclick="deleteCategory(${index})">🗑️ Eliminar</button>
+`;
+container.appendChild(item);
+});
+}
+
+function renderSubcategoriesList() {
+const container = document.getElementById("subcategoriesList");
+container.innerHTML = "";
+pttCategories.forEach((cat, catIndex) => {
+const catDiv = document.createElement("div");
+catDiv.style.marginBottom = "15px";
+catDiv.innerHTML = `<h4 style="margin: 5px 0; color: ${cat.color};">${cat.name}</h4>`;
+const list = document.createElement("div");
+cat.columns.forEach((col, colIndex) => {
+const item = document.createElement("div");
+item.className = "list-item";
+item.innerHTML = `
+<span>${col}</span>
+<button onclick="deleteSubcategory(${catIndex}, ${colIndex})">🗑️ Eliminar</button>
+`;
+list.appendChild(item);
+});
+catDiv.appendChild(list);
+container.appendChild(catDiv);
+});
+}
+
+function renderRolesList() {
+const container = document.getElementById("rolesList");
+container.innerHTML = "";
+allRoles.forEach((role, index) => {
+const item = document.createElement("div");
+item.className = "list-item";
+item.innerHTML = `
+<span>${role}</span>
+<button onclick="deleteRole('${role}')">🗑️ Eliminar</button>
+`;
+container.appendChild(item);
+});
+}
+
+// --- Renderizado ---
+function renderTable(filteredData = null) {
+const tableBody = document.getElementById("tableBody");
+tableBody.innerHTML = "";
+const dataToShow = filteredData !== null ? filteredData : collaborators;
+if (dataToShow.length === 0) {
+tableBody.innerHTML = `<tr><td colspan="11" style="text-align:center;color:#888;padding:20px;">No hay colaboradores que coincidan con los filtros.</td></tr>`;
+return;
+}
+dataToShow.forEach((colab, index) => {
+const realIndex = collaborators.findIndex(c =>
+c.nombres === colab.nombres &&
+c.apellidos === colab.apellidos &&
+c.documento === colab.documento
+);
+const row = document.createElement("tr");
+row.innerHTML = `
+<td>${colab.estado}</td>
+<td>${colab.nombres}</td>
+<td>${colab.apellidos}</td>
+<td>${colab.cargo}</td>
+<td>${colab.documento}</td>
+<td>${colab.passwordPTT}</td>
+<td>${colab.codigoCaja || ""}</td>
+<td>${colab.usuarioPA || ""}</td>
+<td>${colab.cumpleanos || ""}</td>
+<td>${colab.tvni}</td>
+<td class="action-buttons">
+<button class="edit-btn" onclick="openEditModal(${realIndex})" title="Editar"><span>✏️</span></button>
+<button class="delete-btn" onclick="deleteCollaborator(${realIndex})" title="Eliminar"><span>🗑️</span></button>
+</td>
+`;
+tableBody.appendChild(row);
+});
+}
+
+// ✅ Aplicar filtros en DATA
+function applyDataFilters() {
+const estadoChecksCorrect = document.querySelectorAll('.filters-container .filter-group:first-of-type input[type="checkbox"]:checked');
+const selectedEstados = Array.from(estadoChecksCorrect).map(cb => cb.value);
+const cargoChecks = document.querySelectorAll('#cargoFiltersContainer input[type="checkbox"]:checked');
+const selectedCargos = Array.from(cargoChecks).map(cb => cb.value);
+let filtered = collaborators;
+if (selectedEstados.length > 0) {
+filtered = filtered.filter(c => selectedEstados.includes(c.estado));
+}
+if (selectedCargos.length > 0) {
+filtered = filtered.filter(c => selectedCargos.includes(c.cargo));
+}
+renderTable(filtered);
+}
+
+function addCollaborator() {
+const estado = document.getElementById("estado").value;
+const nombres = document.getElementById("nombres").value.trim();
+const apellidos = document.getElementById("apellidos").value.trim();
+const cargo = document.getElementById("cargo").value;
+const documento = document.getElementById("documento").value.trim();
+const passwordPTT = document.getElementById("passwordPTT").value.trim();
+const codigoCaja = document.getElementById("codigoCaja").value.trim();
+const usuarioPA = document.getElementById("usuarioPA").value.trim();
+const cumpleanos = document.getElementById("cumpleanos").value.trim();
+const tvni = document.getElementById("tvni").value;
+if (!nombres || !apellidos || !documento || !passwordPTT || !cumpleanos) {
+alert("Por favor, completa todos los campos obligatorios.");
+return;
+}
+const pttData = {};
+getAllColumnsForCargo(cargo).forEach(col => pttData[col] = "");
+collaborators.push({
+estado,
+nombres,
+apellidos,
+cargo,
+documento,
+passwordPTT,
+codigoCaja,
+usuarioPA,
+cumpleanos,
+tvni,
+vencimientoSanidad: "",
+ptt: pttData
+});
+saveToStorage();
+clearDataForm();
+renderTable();
+renderSanidadTable();
+renderMatrix();
+alert("✅ Colaborador agregado con éxito.");
+}
+
+function clearDataForm() {
+document.getElementById("nombres").value = "";
+document.getElementById("apellidos").value = "";
+document.getElementById("documento").value = "";
+document.getElementById("passwordPTT").value = "";
+document.getElementById("codigoCaja").value = "";
+document.getElementById("usuarioPA").value = "";
+document.getElementById("cumpleanos").value = "";
+document.getElementById("tvni").value = "SI";
+}
+
+function deleteCollaborator(index) {
+if (confirm("⚠️ ¿Estás seguro de eliminar este colaborador?")) {
+collaborators.splice(index, 1);
+saveToStorage();
+renderTable();
+renderSanidadTable();
+renderMatrix();
+}
+}
+
+function openEditModal(index) {
+editingIndex = index;
+const colab = collaborators[index];
+document.getElementById("editEstado").value = colab.estado;
+document.getElementById("editNombres").value = colab.nombres;
+document.getElementById("editApellidos").value = colab.apellidos;
+document.getElementById("editCargo").value = colab.cargo;
+document.getElementById("editDocumento").value = colab.documento;
+document.getElementById("editPasswordPTT").value = colab.passwordPTT;
+document.getElementById("editCodigoCaja").value = colab.codigoCaja || "";
+document.getElementById("editUsuarioPA").value = colab.usuarioPA || "";
+document.getElementById("editCumpleanos").value = colab.cumpleanos || "";
+document.getElementById("editTVNI").value = colab.tvni;
+document.getElementById("editModal").style.display = "block";
+}
+
+function saveEdit() {
+if (editingIndex === -1) return;
+const estado = document.getElementById("editEstado").value;
+const nombres = document.getElementById("editNombres").value.trim();
+const apellidos = document.getElementById("editApellidos").value.trim();
+const cargo = document.getElementById("editCargo").value;
+const documento = document.getElementById("editDocumento").value.trim();
+const passwordPTT = document.getElementById("editPasswordPTT").value.trim();
+const codigoCaja = document.getElementById("editCodigoCaja").value.trim();
+const usuarioPA = document.getElementById("editUsuarioPA").value.trim();
+const cumpleanos = document.getElementById("editCumpleanos").value.trim();
+const tvni = document.getElementById("editTVNI").value;
+if (!nombres || !apellidos || !documento || !passwordPTT || !cumpleanos) {
+alert("Por favor, completa todos los campos obligatorios.");
+return;
+}
+const oldCargo = collaborators[editingIndex].cargo;
+let newPtt = collaborators[editingIndex].ptt;
+if (oldCargo !== cargo) {
+const relevantColumns = getAllColumnsForCargo(cargo);
+const cleanedPtt = {};
+relevantColumns.forEach(col => {
+cleanedPtt[col] = newPtt[col] || "";
+});
+newPtt = cleanedPtt;
+}
+collaborators[editingIndex] = {
+estado, nombres, apellidos, cargo, documento, passwordPTT,
+codigoCaja, usuarioPA, cumpleanos, tvni,
+vencimientoSanidad: collaborators[editingIndex].vencimientoSanidad || "",
+ptt: newPtt
+};
+saveToStorage();
+closeEditModal();
+renderTable();
+renderSanidadTable();
+renderMatrix();
+alert("✅ Colaborador actualizado con éxito.");
+}
+
+function closeEditModal() {
+document.getElementById("editModal").style.display = "none";
+editingIndex = -1;
+}
+
+function updateCurrentDatePeru() {
+const now = new Date();
+const options = { timeZone: 'America/Lima', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+const dateString = now.toLocaleString('es-PE', options);
+document.getElementById("currentDatePeru").textContent = dateString;
+}
+
+function getDaysDifference(dateStr) {
+if (!dateStr) return null;
+try {
+const parts = dateStr.split('/');
+if (parts.length !== 3) return null;
+const [day, month, year] = parts.map(Number);
+const targetDate = new Date(year, month - 1, day);
+const today = new Date();
+const todayLima = new Date(today.toLocaleString('en-US', { timeZone: 'America/Lima' }));
+todayLima.setHours(0, 0, 0, 0);
+const diffTime = targetDate.getTime() - todayLima.getTime();
+const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+return diffDays;
+} catch (e) {
+console.error("Error al calcular diferencia de fechas:", e);
+return null;
+}
+}
+
+function renderSanidadTable() {
+const tableBody = document.getElementById("sanidadBody");
+tableBody.innerHTML = "";
+const activos = collaborators.filter(c => c.estado === "ACTIVO");
+if (activos.length === 0) {
+tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#888;padding:20px;">No hay colaboradores activos.</td></tr>`;
+return;
+}
+activos.forEach(colab => {
+const venc = colab.vencimientoSanidad || "";
+let alertCell = "<span class='alert-gray'>Sin registrar</span>";
+if (venc) {
+const daysDiff = getDaysDifference(venc);
+if (daysDiff !== null) {
+let alertClass = "alert-green";
+let alertText = `Faltan ${daysDiff} días`;
+if (daysDiff < 0) {
+alertClass = "alert-red";
+alertText = `Vencido hace ${Math.abs(daysDiff)} días`;
+} else if (daysDiff <= 30) {
+alertClass = "alert-yellow";
+alertText = `Faltan ${daysDiff} días`;
+}
+alertCell = `<span class="${alertClass}">${alertText}</span>`;
+}
+}
+const row = document.createElement("tr");
+row.innerHTML = `
+<td>${colab.estado}</td>
+<td>${colab.nombres}</td>
+<td>${colab.apellidos}</td>
+<td>${colab.cargo}</td>
+<td>${venc || "-"}</td>
+<td>${alertCell}</td>
+<td><button class="carnet-btn" onclick="openCarnetModal(${collaborators.indexOf(colab)})">🩺 Registrar/Editar</button></td>
+`;
+tableBody.appendChild(row);
+});
+}
+
+function openCarnetModal(index) {
+editingCarnetIndex = index;
+const colab = collaborators[index];
+document.getElementById("carnetNombre").textContent = `${colab.nombres} ${colab.apellidos}`;
+document.getElementById("carnetVencimiento").value = colab.vencimientoSanidad || "";
+document.getElementById("carnetModal").style.display = "block";
+}
+
+function saveCarnet() {
+const venc = document.getElementById("carnetVencimiento").value.trim();
+if (!venc) {
+alert("Por favor, ingresa la fecha de vencimiento.");
+return;
+}
+const regex = /^\d{2}\/\d{2}\/\d{4}$/;
+if (!regex.test(venc)) {
+alert("Formato incorrecto. Usa DD/MM/YYYY (ej: 15/12/2026).");
+return;
+}
+collaborators[editingCarnetIndex].vencimientoSanidad = venc;
+saveToStorage();
+closeCarnetModal();
+renderSanidadTable();
+alert("✅ Carnet de sanidad actualizado.");
+}
+
+function closeCarnetModal() {
+document.getElementById("carnetModal").style.display = "none";
+editingCarnetIndex = -1;
+}
+
+function ensurePttField() {
+let updated = false;
+collaborators.forEach(colab => {
+const relevantColumns = getAllColumnsForCargo(colab.cargo);
+if (!colab.ptt || typeof colab.ptt !== 'object') {
+colab.ptt = {};
+relevantColumns.forEach(col => {
+colab.ptt[col] = "";
+});
+updated = true;
+} else {
+const currentKeys = Object.keys(colab.ptt);
+const shouldHavePq10 = shouldShowPq10Expert(colab.cargo);
+const pq10Columns = pttCategories.find(c => c.name === "PQ10 EXPERT")?.columns || [];
+currentKeys.forEach(key => {
+if (pq10Columns.includes(key) && !shouldHavePq10) {
+delete colab.ptt[key];
+updated = true;
+}
+});
+relevantColumns.forEach(col => {
+if (!(col in colab.ptt)) {
+colab.ptt[col] = "";
+updated = true;
+}
+});
+}
+});
+if (updated) {
+saveToStorage();
+}
+}
+
+function calculateCollaboratorProgress(colab) {
+const relevantColumns = getAllColumnsForCargo(colab.cargo);
+if (relevantColumns.length === 0) return 100;
+let completed = 0;
+relevantColumns.forEach(col => {
+const val = colab.ptt[col] || "";
+if (val) {
+const num = parseFloat(val.replace('%', '').trim());
+if (!isNaN(num) && num >= 100) {
+completed++;
+}
+}
+});
+return Math.round((completed / relevantColumns.length) * 100);
+}
+
+function renderMatrix() {
+ensurePttField();
+const container = document.getElementById("matrixContainer");
+container.innerHTML = "";
+const search = document.getElementById("searchName").value.toLowerCase().trim();
+const statusFilter = document.getElementById("filterStatus").value;
+let filtered = collaborators;
+if (statusFilter) {
+filtered = filtered.filter(c => c.estado === statusFilter);
+}
+if (search) {
+filtered = filtered.filter(c =>
+c.nombres.toLowerCase().includes(search) ||
+c.apellidos.toLowerCase().includes(search)
+);
+}
+if (filtered.length === 0) {
+container.innerHTML = `<p style="text-align:center;color:#888;padding:20px;">No hay colaboradores que coincidan con los filtros.</p>`;
+return;
+}
+const table = document.createElement("table");
+table.style.width = "100%";
+table.style.borderCollapse = "collapse";
+table.style.border = "1px solid var(--border)";
+const thead = document.createElement("thead");
+const headerRow = document.createElement("tr");
+headerRow.innerHTML = `
+<th>ESTADO</th>
+<th>NOMBRES</th>
+<th>APELLIDOS</th>
+<th>EDITAR</th>
+`;
+const showPq10ExpertInTable = filtered.some(colab => shouldShowPq10Expert(colab.cargo));
+pttCategories.forEach(cat => {
+if (cat.name === "PQ10 EXPERT" && !showPq10ExpertInTable) {
+return;
+}
+const th = document.createElement("th");
+th.colSpan = cat.columns.length;
+th.textContent = cat.name;
+th.style.background = cat.color;
+th.style.color = "white";
+th.style.padding = "10px";
+th.style.textAlign = "center";
+th.style.fontWeight = "bold";
+th.style.fontSize = "13px";
+th.style.border = "1px solid white";
+headerRow.appendChild(th);
+});
+thead.appendChild(headerRow);
+table.appendChild(thead);
+const subHeaderRow = document.createElement("tr");
+subHeaderRow.innerHTML = `
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+`;
+pttCategories.forEach(cat => {
+if (cat.name === "PQ10 EXPERT" && !showPq10ExpertInTable) {
+return;
+}
+cat.columns.forEach(col => {
+const th = document.createElement("th");
+th.textContent = col;
+th.style.padding = "8px";
+th.style.fontSize = "11px";
+th.style.fontWeight = "bold";
+th.style.textAlign = "center";
+th.style.backgroundColor = cat.color;
+th.style.color = "white";
+th.style.border = "1px solid white";
+subHeaderRow.appendChild(th);
+});
+});
+table.appendChild(subHeaderRow);
+const tbody = document.createElement("tbody");
+filtered.forEach(colab => {
+const progress = calculateCollaboratorProgress(colab);
+let progressColor = "#e74c3c";
+if (progress >= 90) progressColor = "#27ae60";
+else if (progress >= 70) progressColor = "#f39c12";
+const row = document.createElement("tr");
+row.innerHTML = `
+<td>${colab.estado}</td>
+<td>
+${colab.nombres}<br>
+<strong style="color: ${progressColor}; font-size: 11px;">${progress}%</strong>
+</td>
+<td>${colab.apellidos}</td>
+<td><button class="ptt-btn" onclick="openPttModal(${collaborators.indexOf(colab)})">✏️</button></td>
+`;
+pttCategories.forEach(cat => {
+if (cat.name === "PQ10 EXPERT" && !showPq10ExpertInTable) {
+return;
+}
+if (cat.name === "PQ10 EXPERT" && !shouldShowPq10Expert(colab.cargo)) {
+cat.columns.forEach(() => {
+const td = document.createElement("td");
+td.innerHTML = "-";
+td.style.textAlign = "center";
+td.style.padding = "8px";
+td.style.color = "#bbb";
+td.style.border = "1px solid var(--border)";
+row.appendChild(td);
+});
+} else {
+cat.columns.forEach(col => {
+const val = colab.ptt[col] || "";
+let iconClass = "icon-pending";
+let icon = "❌";
+if (val) {
+const num = parseFloat(val.replace('%', '').trim());
+if (!isNaN(num)) {
+if (num >= 100) {
+iconClass = "icon-completed";
+icon = "✅";
+} else if (num > 0) {
+iconClass = "icon-in-progress";
+icon = "⏳";
+}
+}
+}
+const td = document.createElement("td");
+td.innerHTML = `<span class="icon ${iconClass}">${icon}</span>`;
+td.style.textAlign = "center";
+td.style.padding = "8px";
+td.style.border = "1px solid var(--border)";
+row.appendChild(td);
+});
+}
+});
+tbody.appendChild(row);
+});
+table.appendChild(tbody);
+container.appendChild(table);
+}
+
+function filterMatrix() {
+renderMatrix();
+}
+
+function openPttModal(index) {
+editingPttIndex = index;
+const colab = collaborators[index];
+document.getElementById("pttNombre").textContent = `${colab.nombres} ${colab.apellidos}`;
+const container = document.getElementById("pttFieldsContainer");
+container.innerHTML = "";
+pttCategories.forEach(cat => {
+if (cat.name === "PQ10 EXPERT" && !shouldShowPq10Expert(colab.cargo)) {
+return;
+}
+const section = document.createElement("div");
+section.className = "category-section";
+section.innerHTML = `
+<details style="margin-bottom:12px;">
+<summary style="background:${cat.color}; color:white; font-weight:bold; padding:10px; border-radius:6px; cursor:pointer; list-style:none;">
+${cat.name}
+</summary>
+<div style="padding:12px; background:#f9f9f9; border:1px solid #ddd; border-top:none; border-radius:0 0 6px 6px; margin-top:4px;">
+<div class="form-row" style="flex-wrap: wrap; gap:12px;">
+${cat.columns.map(col => `
+<div class="form-group" style="flex:1 1 120px; min-width:120px;">
+<label style="font-size:0.9rem;">${col}:</label>
+<input type="text" class="ptt-input" data-col="${col}" value="${colab.ptt[col] || ''}" placeholder="Ej: 100%" />
+</div>
+`).join('')}
+</div>
+</div>
+</details>
+`;
+container.appendChild(section);
+});
+document.getElementById("pttModal").style.display = "block";
+}
+
+function savePtt() {
+const inputs = document.querySelectorAll(".ptt-input");
+const pttData = {};
+inputs.forEach(input => {
+const col = input.getAttribute("data-col");
+pttData[col] = input.value.trim();
+});
+const currentPtt = collaborators[editingPttIndex].ptt;
+for (const key in currentPtt) {
+if (!(key in pttData)) {
+pttData[key] = currentPtt[key];
+}
+}
+collaborators[editingPttIndex].ptt = pttData;
+saveToStorage();
+closePttModal();
+renderMatrix();
+alert("✅ Reporte PTT actualizado.");
+}
+
+function closePttModal() {
+document.getElementById("pttModal").style.display = "none";
+editingPttIndex = -1;
+}
+
+// --- Configuración ---
+function addNewCategory() {
+const name = document.getElementById("newCategoryName").value.trim();
+if (!name) {
+alert("Por favor, ingresa un nombre para la categoría.");
+return;
+}
+const color = generateRandomColor();
+pttCategories.push({
+name: name.toUpperCase(),
+color: color,
+columns: []
+});
+saveCategories();
+populateCategorySelect();
+renderCategoriesList();
+document.getElementById("newCategoryName").value = "";
+alert("✅ Categoría agregada con éxito.");
+}
+
+function deleteCategory(index) {
+if (confirm(`⚠️ ¿Estás seguro de eliminar la categoría "${pttCategories[index].name}" y todas sus subcategorías?`)) {
+pttCategories.splice(index, 1);
+saveCategories();
+populateCategorySelect();
+renderCategoriesList();
+renderSubcategoriesList();
+collaborators.forEach(colab => {
+const relevantColumns = getAllColumnsForCargo(colab.cargo);
+const newPtt = {};
+relevantColumns.forEach(col => {
+if (colab.ptt[col] !== undefined) {
+newPtt[col] = colab.ptt[col];
+}
+});
+colab.ptt = newPtt;
+});
+saveToStorage();
+renderMatrix();
+alert("✅ Categoría eliminada con éxito.");
+}
+}
+
+function addNewSubcategory() {
+const name = document.getElementById("newSubcategoryName").value.trim();
+const parentIndex = document.getElementById("parentCategorySelect").value;
+if (!name) {
+alert("Por favor, ingresa un nombre para la subcategoría.");
+return;
+}
+if (parentIndex === "") {
+alert("Por favor, selecciona una categoría padre.");
+return;
+}
+const categoryName = name.toUpperCase();
+pttCategories[parentIndex].columns.push(categoryName);
+saveCategories();
+document.getElementById("newSubcategoryName").value = "";
+renderSubcategoriesList();
+collaborators.forEach(colab => {
+const relevantColumns = getAllColumnsForCargo(colab.cargo);
+if (relevantColumns.includes(categoryName)) {
+if (!colab.ptt[categoryName]) {
+colab.ptt[categoryName] = "";
+}
+}
+});
+saveToStorage();
+renderMatrix();
+alert("✅ Subcategoría agregada con éxito.");
+}
+
+function deleteSubcategory(catIndex, colIndex) {
+if (confirm(`⚠️ ¿Estás seguro de eliminar la subcategoría "${pttCategories[catIndex].columns[colIndex]}"?`)) {
+pttCategories[catIndex].columns.splice(colIndex, 1);
+saveCategories();
+renderSubcategoriesList();
+collaborators.forEach(colab => {
+delete colab.ptt[pttCategories[catIndex].columns[colIndex]];
+});
+saveToStorage();
+renderMatrix();
+alert("✅ Subcategoría eliminada con éxito.");
+}
+}
+
+function addNewRole() {
+const roleName = document.getElementById("newRoleName").value.trim().toUpperCase();
+if (!roleName) {
+alert("Por favor, ingresa un nombre para el cargo.");
+return;
+}
+if (allRoles.includes(roleName)) {
+alert("Este cargo ya existe.");
+return;
+}
+customRoles.push(roleName);
+saveRoles();
+document.getElementById("newRoleName").value = "";
+renderRolesList();
+populateCargoFilters();
+alert("✅ Cargo agregado con éxito.");
+}
+
+function deleteRole(roleName) {
+if (confirm(`⚠️ ¿Estás seguro de eliminar el cargo "${roleName}"? Se actualizarán los colaboradores que lo tengan.`)) {
+const index = customRoles.indexOf(roleName);
+if (index !== -1) {
+customRoles.splice(index, 1);
+}
+saveRoles();
+renderRolesList();
+populateCargoFilters();
+collaborators.forEach(colab => {
+if (colab.cargo === roleName) {
+colab.cargo = "T.M";
+}
+});
+saveToStorage();
+renderTable();
+renderMatrix();
+alert("✅ Cargo eliminado con éxito.");
+}
+}
+
+function backupData() {
+const backup = {
+collaborators: collaborators,
+pttCategories: pttCategories,
+customRoles: customRoles,
+timestamp: new Date().toISOString()
+};
+const dataStr = JSON.stringify(backup, null, 2);
+const dataBlob = new Blob([dataStr], {type: 'application/json'});
+const url = URL.createObjectURL(dataBlob);
+const link = document.createElement('a');
+link.href = url;
+link.download = `respaldo_gestion_colaboradores_${new Date().toISOString().split('T')[0]}.json`;
+link.click();
+URL.revokeObjectURL(url);
+}
+
+function importBackup() {
+document.getElementById("importFile").click();
+}
+
+function handleImportFile(event) {
+const file = event.target.files[0];
+if (!file) return;
+const reader = new FileReader();
+reader.onload = function(e) {
+try {
+const data = JSON.parse(e.target.result);
+if (!data.collaborators || !data.pttCategories || !data.customRoles) {
+throw new Error("Formato de respaldo inválido.");
+}
+if (confirm("⚠️ ¿Estás seguro de reemplazar toda la configuración actual?")) {
+collaborators = data.collaborators;
+pttCategories = data.pttCategories;
+customRoles = data.customRoles;
+pttCategories.forEach(cat => {
+if (!cat.color) cat.color = generateRandomColor();
+});
+saveToStorage();
+saveCategories();
+saveRoles();
+renderTable();
+renderSanidadTable();
+renderMatrix();
+renderCategoriesList();
+renderSubcategoriesList();
+renderRolesList();
+populateCategorySelect();
+populateRoleSelects();
+populateCargoFilters();
+alert("✅ Respaldo importado con éxito.");
+}
+} catch (err) {
+alert("❌ Error al importar el respaldo: " + err.message);
+}
+};
+reader.readAsText(file);
+}
+
+// ✅ DASHBOARD mejorado visualmente
+function renderDashboard() {
+const container = document.getElementById("dashboardContent");
+container.innerHTML = "";
+const activos = collaborators.filter(c => c.estado === "ACTIVO");
+if (activos.length === 0) {
+container.innerHTML = `
+<div class="welcome-message">
+<h3>🎉 ¡Bienvenido al Dashboard!</h3>
+<p>Aún no tienes colaboradores registrados.</p>
+<p>Ve a la pestaña <strong>📋 DATA</strong> y agrega tu primer colaborador para empezar a ver métricas.</p>
+<button onclick="openTab('data')" style="margin-top: 15px; background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600;">➡️ Ir a DATA</button>
+</div>
+`;
+return;
+}
+const totalActivos = activos.length;
+const avances = activos.map(c => calculateCollaboratorProgress(c));
+const promedio = Math.round(avances.reduce((a, b) => a + b, 0) / avances.length);
+let vencidos = 0;
+activos.forEach(c => {
+const days = getDaysDifference(c.vencimientoSanidad);
+if (days !== null && days < 0) vencidos++;
+});
+// Tarjetas de métricas
+const metricsHTML = `
+<div class="dashboard-grid">
+<div class="metric-card">
+<div class="metric-label">👥 Colaboradores Activos</div>
+<div class="metric-value">${totalActivos}</div>
+</div>
+<div class="metric-card">
+<div class="metric-label">📈 Avance Promedio</div>
+<div class="metric-value" style="color: ${promedio >= 90 ? 'var(--success)' : promedio >= 70 ? 'var(--warning)' : 'var(--danger)'};">${promedio}%</div>
+</div>
+<div class="metric-card">
+<div class="metric-label">🩺 Carnets Vencidos</div>
+<div class="metric-value" style="color: ${vencidos > 0 ? 'var(--danger)' : 'var(--success)'};">${vencidos}</div>
+</div>
+</div>
+`;
+// Avance por categoría
+let categoriasHTML = "<h3>📊 Avance por Escuela</h3>";
+const showPq10Expert = activos.some(c => shouldShowPq10Expert(c.cargo));
+pttCategories.forEach(cat => {
+if (cat.name === "PQ10 EXPERT" && !showPq10Expert) return;
+const cols = cat.columns;
+let totalItems = 0;
+let completedItems = 0;
+activos.forEach(colab => {
+if (cat.name === "PQ10 EXPERT" && !shouldShowPq10Expert(colab.cargo)) return;
+cols.forEach(col => {
+totalItems++;
+const val = colab.ptt[col] || "";
+if (val) {
+const num = parseFloat(val.replace('%', '').trim());
+if (!isNaN(num) && num >= 100) completedItems++;
+}
+});
+});
+const pct = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+categoriasHTML += `
+<div class="progress-category">
+<div style="display: flex; justify-content: space-between; font-weight: 600; color: ${cat.color}; margin-bottom: 6px;">
+<span>${cat.name}</span>
+<span>${pct}%</span>
+</div>
+<div class="progress-bar">
+<div class="progress-fill" style="width: ${pct}%; background: ${cat.color};"></div>
+</div>
+</div>
+`;
+});
+// Colaboradores en riesgo
+const enRiesgo = activos.filter(c => {
+const prog = calculateCollaboratorProgress(c);
+const days = getDaysDifference(c.vencimientoSanidad);
+const carnetVencido = days !== null && days < 0;
+return prog < 70 || carnetVencido;
+});
+let riesgoHTML = "";
+if (enRiesgo.length > 0) {
+riesgoHTML = `
+<h3 style="color: var(--danger); margin-top: 24px;">⚠️ Colaboradores en Riesgo (${enRiesgo.length})</h3>
+<div class="table-container">
+<table style="width:100%; border-collapse: collapse; margin-top: 12px; border: 1px solid var(--border);">
+<thead>
+<tr>
+<th style="background:var(--danger); color:white; padding:10px; border: 1px solid white;">NOMBRE</th>
+<th style="background:var(--danger); color:white; padding:10px; border: 1px solid white;">AVANCE</th>
+<th style="background:var(--danger); color:white; padding:10px; border: 1px solid white;">SANIDAD</th>
+<th style="background:var(--danger); color:white; padding:10px; border: 1px solid white;">ACCIONES</th>
+</tr>
+</thead>
+<tbody>`;
+enRiesgo.forEach(c => {
+const prog = calculateCollaboratorProgress(c);
+const days = getDaysDifference(c.vencimientoSanidad);
+let sanidadStatus = "OK";
+if (days === null) sanidadStatus = "Sin registrar";
+else if (days < 0) sanidadStatus = "VENCIDO";
+else if (days <= 15) sanidadStatus = "Próximo a Vencer";
+riesgoHTML += `
+<tr>
+<td style="padding:10px; border: 1px solid var(--border);">${c.nombres} ${c.apellidos}</td>
+<td style="padding:10px; border: 1px solid var(--border); color:${prog < 70 ? 'var(--danger)' : 'inherit'};">${prog}%</td>
+<td style="padding:10px; border: 1px solid var(--border); color:${sanidadStatus.includes('VENCIDO') ? 'var(--danger)' : 'inherit'};">${sanidadStatus}</td>
+<td style="padding:10px; border: 1px solid var(--border);" class="action-buttons-riesgo">
+<button class="ptt-btn" onclick="openPttModal(${collaborators.indexOf(c)})">
+  <span>✏️</span>PTT
+</button>
+<button class="carnet-btn" onclick="openCarnetModal(${collaborators.indexOf(c)})">
+  <span>🩺</span>Sanidad
+</button>
+</td>
+</tr>
+`;
+});
+riesgoHTML += "</tbody></table></div>";
+}
+container.innerHTML = metricsHTML + categoriasHTML + riesgoHTML;
+}
+
+function openTab(tabName) {
+document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
+document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add("active");
+document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+document.getElementById(tabName).classList.add("active");
+if (tabName === "sanidad") {
+updateCurrentDatePeru();
+renderSanidadTable();
+} else if (tabName === "reportePTT") {
+renderMatrix();
+} else if (tabName === "dashboard") {
+renderDashboard();
+} else if (tabName === "configuracion") {
+populateCategorySelect();
+renderCategoriesList();
+renderSubcategoriesList();
+renderRolesList();
+} else if (tabName === "data") {
+applyDataFilters();
+}
+}
+
+// ✅ Nueva función para alternar visibilidad
+function toggleFiltersAndForm() {
+const container = document.getElementById("filtersAndFormContainer");
+const btn = document.getElementById("toggleFiltersFormBtn");
+if (container.style.display === "none") {
+container.style.display = "block";
+btn.textContent = "▼ Ocultar Filtros y Formulario";
+} else {
+container.style.display = "none";
+btn.textContent = "▲ Mostrar Filtros y Formulario";
+}
+}
+
+window.onload = function() {
+populateRoleSelects();
+populateCategorySelect();
+populateCargoFilters();
+renderTable();
+updateCurrentDatePeru();
+setInterval(updateCurrentDatePeru, 60000);
+};
+</script>
+</body>
+</html>
